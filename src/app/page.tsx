@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import Link from 'next/link'
 
 interface OnboardingStepProps {
     title: string
@@ -80,7 +81,7 @@ const OnboardingWizard = () => {
                     type='button'
                     title='Get Started'
                     className='w-full transform rounded-full bg-white px-6 py-3 text-lg font-semibold text-blue-600 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl'>
-                    Get Started
+                    <Link href='/dashboard'>Get Started</Link>
                 </button>
             </div>
         </div>
