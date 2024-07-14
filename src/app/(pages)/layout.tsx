@@ -1,3 +1,4 @@
+import TopBarLayout from '@/components/top-bar/top-bar'
 import { Button } from '@/components/ui/button'
 import { AwardIcon, HomeIcon, LineChartIcon, RocketIcon, UserIcon } from 'lucide-react'
 import Link from 'next/link'
@@ -5,6 +6,9 @@ import Link from 'next/link'
 export default function PagesLayout({ children }: { children: React.ReactNode }) {
     return (
         <div className='flex h-screen flex-col overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white'>
+            <header className='mb-16 flex items-center justify-between p-4'>
+                <TopBarLayout />
+            </header>
             <main className='animate-fadeIn flex-grow space-y-6 overflow-y-auto p-4'>{children}</main>
             <nav className='bg-white bg-opacity-10 backdrop-blur-lg'>
                 <ul className='flex justify-around p-2'>
