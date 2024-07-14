@@ -1,22 +1,24 @@
-import React from 'react'
+'use client'
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { TrendingUp, TrendingDown, Star, Clock, DollarSign } from 'lucide-react'
+import { TrendingUp, TrendingDown, Star, Clock } from 'lucide-react'
+import { useReadPredictionBattleCurrentRoundId } from '@/types/contracts'
 
-interface ProjectCardProps {
-    project: {
-        name: string
-        description: string
-        timeLeft: string
-        totalRaised: string
-        trend: string
-        popularity: number
-    }
+interface Project {
+    id: number
+    name: string
+    description: string
+    timeLeft: string
+    totalBets: string
+    trend: string
+    popularity: number
+    url: string
 }
 
-const ProjectCard = ({ project }: ProjectCardProps) => {
-    const { name, description, timeLeft, totalRaised, trend, popularity } = project
+const ProjectCard = ({ project, onViewDetails }: { project: Project; onViewDetails: () => void }) => {
+    const { name, description, timeLeft, totalBets, trend, popularity } = project
 
     return (
         <Card className='mb-4 overflow-hidden bg-white bg-opacity-10 text-white transition-all duration-300 hover:bg-opacity-20'>
@@ -39,14 +41,12 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
                         <Clock className='mr-1 h-4 w-4' />
                         {timeLeft}
                     </div>
-                    <div className='flex items-center'>
-                        <DollarSign className='mr-1 h-4 w-4' />
-                        {totalRaised} PQF
-                    </div>
+                    <div>Total Bets: {totalBets} PQF</div>
                 </div>
                 <Button
                     variant='outline'
-                    className='mt-3 w-full border-white text-white transition-colors duration-300 hover:bg-white hover:text-blue-600'>
+                    className='mt-3 w-full border-white text-white transition-colors duration-300 hover:bg-white hover:text-blue-600'
+                    onClick={onViewDetails}>
                     View Details
                 </Button>
             </CardContent>
@@ -55,36 +55,52 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
 }
 
 const ProjectsScreen = () => {
-    const projects = [
+    const router = useRouter()
+    const [projects, setProjects] = useState<Project[]>([])
+    const { data: currentRoundId } = useReadPredictionBattleCurrentRoundId()
+
+    // Mocked projects data
+    const mockedProjects: Project[] = [
         {
             id: 1,
             name: 'EcoTech Solutions',
             description: 'Developing sustainable energy solutions for urban environments.',
             timeLeft: '3 days left',
-            totalRaised: '15,000',
+            totalBets: '15,000',
             trend: 'up',
             popularity: 3,
+            url: 'https://example.com/ecotech',
         },
         {
             id: 2,
             name: 'HealthAI',
             description: 'AI-powered diagnostics for early disease detection.',
             timeLeft: '7 days left',
-            totalRaised: '12,500',
+            totalBets: '12,500',
             trend: 'up',
             popularity: 4,
+            url: 'https://example.com/healthai',
         },
         {
             id: 3,
             name: 'EduConnect',
             description: 'Bridging educational gaps through decentralized learning platforms.',
             timeLeft: '2 days left',
-            totalRaised: '8,000',
+            totalBets: '8,000',
             trend: 'down',
             popularity: 2,
+            url: 'https://example.com/educonnect',
         },
-        // Add more projects as needed
     ]
+
+    useEffect(() => {
+        // Set mocked projects when component mounts
+        setProjects(mockedProjects)
+    }, [])
+
+    const handleViewDetails = (projectId: number) => {
+        router.push(`/projects/${projectId}`)
+    }
 
     return (
         <div className='flex h-screen flex-col bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white'>
@@ -92,12 +108,14 @@ const ProjectsScreen = () => {
                 <h1 className='mb-4 text-2xl font-bold'>Projects</h1>
                 <div className='space-y-4'>
                     {projects.map(project => (
-                        <ProjectCard key={project.id} project={project} />
+                        <ProjectCard
+                            key={project.id}
+                            project={project}
+                            onViewDetails={() => handleViewDetails(project.id)}
+                        />
                     ))}
                 </div>
             </main>
-
-            {/* Navigation bar component would go here */}
         </div>
     )
 }

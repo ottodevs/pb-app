@@ -1,25 +1,58 @@
-import React from 'react'
+'use client'
+
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { DollarSign, TrendingUp, MessageSquare } from 'lucide-react'
+import { TrendingUp } from 'lucide-react'
+import {
+    // useReadPredictionBattleGetProjects,
+    useReadPredictionBattleCurrentRoundId,
+    // useWritePredictionBattleBet,
+} from '@/types/contracts'
+import { parseEther } from 'viem'
 
 const ProjectDetailScreen = () => {
-    const project = {
-        name: 'EcoTech Solutions',
-        description:
-            'Developing sustainable energy solutions for urban environments. Our project aims to create efficient solar panels integrated into building materials, reducing the carbon footprint of cities while maintaining aesthetic appeal.',
-        creator: 'Green Innovations Inc.',
-        creatorAvatar: '/api/placeholder/100/100',
-        fundingGoal: 50000,
-        currentFunding: 32500,
-        supporters: 128,
-        predictionsCount: 76,
-    }
+    const router = useRouter()
+    const { id } = router.query
+    const [project, setProject] = useState<any>(null)
+    const { data: currentRoundId } = useReadPredictionBattleCurrentRoundId()
+    // const { data: projectsData } = useReadPredictionBattleGetProjects({ args: [currentRoundId ?? BigInt(0)] })
+    // const { writeContract: bet } = useWritePredictionBattleBet()
+
+    // useEffect(() => {
+    //     if (projectsData && id) {
+    //         const projectData = JSON.parse(projectsData[Number(id)])
+    //         setProject({
+    //             ...projectData,
+    //             fundingGoal: 50000, // You might want to add this to your contract
+    //             currentFunding: 32500, // You might want to add this to your contract
+    //             supporters: 128, // You might want to add this to your contract
+    //             predictionsCount: 76, // You might want to add this to your contract
+    //         })
+    //     }
+    // }, [projectsData, id])
+
+    if (!project) return <div>Loading...</div>
 
     const fundingPercentage = (project.currentFunding / project.fundingGoal) * 100
+
+    const handleBet = async () => {
+        if (currentRoundId === undefined) {
+            console.error('Current round ID is undefined')
+            return
+        }
+        try {
+            // await bet({
+            //     args: [currentRoundId, BigInt(id as string), parseEther('1')], // Assuming 1 PQF as bet amount
+            // })
+        } catch (error) {
+            console.error('Error placing bet:', error)
+        }
+    }
 
     return (
         <div className='flex h-screen flex-col bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white'>
@@ -31,10 +64,9 @@ const ProjectDetailScreen = () => {
                     <CardContent>
                         <div className='mb-4 flex items-center space-x-2'>
                             <Avatar className='h-8 w-8'>
-                                <AvatarImage src={project.creatorAvatar} alt={project.creator} />
-                                <AvatarFallback>{project.creator[0]}</AvatarFallback>
+                                <AvatarFallback>{project.name[0]}</AvatarFallback>
                             </Avatar>
-                            <span className='text-sm'>{project.creator}</span>
+                            <span className='text-sm'>{project.name}</span>
                         </div>
                         <p className='mb-4 text-sm'>{project.description}</p>
                         <div className='space-y-2'>
@@ -51,16 +83,10 @@ const ProjectDetailScreen = () => {
                     </CardContent>
                 </Card>
 
-                <div className='mb-6 grid grid-cols-2 gap-4'>
-                    <Button className='w-full bg-green-500 hover:bg-green-600'>
-                        <DollarSign className='mr-2 h-4 w-4' />
-                        Contribute
-                    </Button>
-                    <Button
-                        variant='outline'
-                        className='w-full border-white text-white hover:bg-white hover:text-blue-600'>
+                <div className='mb-6'>
+                    <Button className='w-full bg-green-500 hover:bg-green-600' onClick={handleBet}>
                         <TrendingUp className='mr-2 h-4 w-4' />
-                        Make Prediction
+                        Place Bet
                     </Button>
                 </div>
 
@@ -99,7 +125,6 @@ const ProjectDetailScreen = () => {
                                         </p>
                                     </div>
                                 </div>
-                                {/* Add more comments */}
                             </CardContent>
                         </Card>
                     </TabsContent>

@@ -5,11 +5,11 @@ import { erc20Abi } from 'viem'
 import { baseSepolia } from 'viem/chains'
 
 const predictionBattleDeployments = {
-    [baseSepolia.id]: '0x' as Address, // github commit: null,
+    [baseSepolia.id]: '0xA6b4D42E3Aa095532327950A83DF88B9eab92558' as Address, // github commit: null,
 }
 
 const nounsDeployments = {
-    [baseSepolia.id]: '0x' as Address,
+    [baseSepolia.id]: '0x896a41C0f29efC73EB9E1B2571F4E541A80a3836' as Address,
 }
 
 const nounsAbi = [
